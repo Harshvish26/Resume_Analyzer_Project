@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register - Student Guide</title>
+  <link rel="stylesheet" href="register.css">
+  <link rel="stylesheet" href="../public/style.css">
+  
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo nav-name">Student Guide</div>
+    <div class="nav-links nav-options">
+      <a href="../public/index.html" >Home</a>
+      <a href="./about.html">About</a>
+      <a href="login.html">User Login</a>
+      <a href="services.html">Services</a>
+    </div>
+  </nav>
+
+  <main class="try-section">
+    <div class="try-box">
+      <h2>User Registration</h2>
+      <form action="/register" id="register-form" method="post" enctype="multipart/form-data" onsubmit="registerUser(); return false;">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" required />
+
+        <label for="email">Email</label>
+        <input type="email" id="email" required />
+
+        <label for="field">Field of Interest</label>
+        <select id="field" required>
+          <option>Data Scientist</option>
+          <option>Frontend Developer</option>
+          <option>Backend Developer</option>
+          <option>Cyber Security</option>
+          <option>DevOps Engineer</option>
+          <option>AI/ML Engineer</option>
+          <option>Blockchain Developer</option>
+          <option>Mobile App Developer</option>
+          <option>Full Stack Developer</option>
+        </select>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" required />
+
+        <label for="confirm-password">Confirm Password</label>
+        <input type="password" id="confirm-password" required />
+
+
+        <button type="submit">Register</button>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    Contact us: harshvishwakarma26@gmail.com<br/>
+    © 2025 Student Guide Team. All rights reserved.
+  </footer>
+
+  <script>
+    function registerUser() {
+      alert('Registration submitted successfully! (This is a static demo)');
+    }
+
+    document.getElementById("register-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const field = document.getElementById("field").value;
+    const password = document.getElementById("password").value;
+
+    const formData = {
+      name,
+      email,
+      field,
+      password,
+    };
+
+    try {
+      const response = await fetch("http://localhost:3000/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert("Registration successful");
+      } else {
+        alert(data.message || "Something went wrong");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error: " + error.message);
+    }
+  });
+
+
+  </script>
+</body>
+</html>

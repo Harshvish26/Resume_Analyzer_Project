@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Guide</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+</head>
+<body>
+  
+  <!-- HOME PAGE -->
+  <div id="home-page">
+    <header>
+      <h1>Student Guide</h1>
+      <p>A smarter way to align your skills with job opportunities</p>
+    </header>
+
+    <section>
+      <h2 class="text-center">Meet the Team</h2>
+      <div class="grid team-grid">
+        <div class="card"><i class="fas fa-user-graduate"></i><h3>Abhishek Pandit</h3><p>Frontend Developer</p></div>
+        <div class="card"><i class="fas fa-user-graduate"></i><h3>Harsh Vishwakarma</h3><p>Backend Developer</p></div>
+        <div class="card"><i class="fas fa-user-graduate"></i><h3>Anil Dehariya</h3><p>Database</p></div>
+        <div class="card"><i class="fas fa-user-graduate"></i><h3>Jyoti Meena</h3><p>API Integration</p></div>
+      </div>
+    </section>
+
+    <section style="background: white;">
+      <div class="text-center" style="max-width: 600px; margin: auto;">
+        <h2>Problem Statement</h2>
+        <p>Many students are unaware of how their current qualifications align with job market demands. Traditional job search methods lack personalized feedback, leading to missed opportunities.</p>
+        <br>
+        <button class="btn" onclick="navigateToTryIt()">Try it with your Resume</button>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-center">Future Advancements</h2>
+      <div class="grid team-grid">
+        <div class="card">Incorporate more sophisticated AI models for better accuracy.</div>
+        <div class="card">Recommend courses from platforms like Udemy and Coursera.</div>
+        <div class="card">Integrate real-time job market data.</div>
+        <div class="card">Continuously improve user interface based on feedback.</div>
+        <div class="card">Regularly update job role database for emerging fields.</div>
+      </div>
+    </section>
+
+    
+  </div>
+
+  <!-- TRY IT PAGE -->
+  <div id="try-page" style="display: none; min-height: 100vh; background: #ebf8ff;">
+    <nav>
+      <div class="nav-name">Student Guide</div>
+      <div class="nav-options">
+        <a href="../public/index.html" onclick="navigateToHome()">Home</a>
+        <a href="../pages/about.html">About</a>
+        <a href="../pages/login.html">User Login</a>
+        <a href="../pages/services.html">Services</a>
+      </div>
+    </nav>
+
+    <div style="padding: 3rem 1rem;">
+      <div class="form-container">
+        <form id="analyzeForm">
+            <h2 class="text-center">Upload Your Resume</h2>
+            <label for="jobRole">Select Your Field</label>
+            <select name="jobRole" id="jobRole" onchange="showOtherField(this)">
+            <option>Data Scientist</option>
+            <option>Frontend Developer</option>
+            <option>Backend Developer</option>
+            <option>Cyber Security</option>
+            <option>DevOps Engineer</option>
+            <option>AI/ML Engineer</option>
+            <option>Blockchain Developer</option>
+            <option>Mobile App Developer</option>
+            <option>Full Stack Developer</option>
+            <option value="other">Other</option>
+            </select>
+
+            <div id="customFieldContainer" style="display: none; margin-top: 10px;">
+              <label for="customJobRole">Enter your custom field</label>
+              <input type="text" id="customJobRole" name="customJobRole" placeholder="Enter custom field">
+            </div>
+
+            <label for="file">Upload Your Resume</label>
+            <input type="file" id="resume" accept=".pdf" required />
+            <button class="btn" id="analyzeBtn" style="width: 100%;">Submit</button>
+        </form>
+      </div>
+        <div id="result" class="result" style="display: none; "></div>
+    </div>
+
+  </div>
+
+  <!-- <div class="footer" style="background: #628ee8; color: #000000db; height: 50px;">
+    <p>Contact us: harshvishwakarma26@gmail.com</p>
+    <p>© 2025 Student Guide Team. All rights reserved.</p>
+  </div> -->
+
+  <footer>
+    Contact us: harshvishwakarma26@gmail.com<br/>
+    © 2025 Student Guide Team. All rights reserved.
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+
+    const form = document.getElementById("analyzeForm");
+    const resultBox = document.getElementById("result");
+    const button = document.getElementById("analyzeBtn");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const resumeFile = document.getElementById("resume").files[0];
+      const roleSelect = document.getElementById("jobRole");
+      const selectedRoles = Array.from(roleSelect.selectedOptions).map(option => option.value);
+
+      if (!resumeFile || selectedRoles.length === 0) {
+        alert("Please upload a resume and select at least one job role.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("resume", resumeFile);
+      formData.append("jobRole", selectedRoles.join(", ")); // multiple roles support
+
+      try {
+        button.disabled = true;
+        button.textContent = "Analyzing...";
+
+        const response = await fetch("http://localhost:3000/analyze", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json(); // ⬅️ changed from .json() to .text()
+        const html = marked.parse(data);    // ⬅️ convert markdown to HTML
+        resultBox.innerHTML = html;         // ⬅️ show HTML in result box
+        resultBox.style.display = "block";  // ⬅️ make sure it's visible
+        
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Something went wrong. Try again.");
+      } finally {
+        button.disabled = false;
+        button.textContent = "Analyze Resume";
+      }
+    });
+
+    function navigateToTryIt() {
+      document.getElementById('home-page').style.display = 'none';
+      document.getElementById('try-page').style.display = 'block';
+    }
+
+    function navigateToHome() {
+      document.getElementById('home-page').style.display = 'block';
+      document.getElementById('try-page').style.display = 'none';
+    }
+
+    function showOtherField(select) {
+      const container = document.getElementById('customFieldContainer');
+      if (select.value === "other") {
+        container.style.display = "block";
+      } else {
+        container.style.display = "none";
+      }
+    }
+
+  </script>
+  
+</body>
+</html>
